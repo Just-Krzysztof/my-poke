@@ -12,7 +12,10 @@ const PER_PAGE = 6;
 
 export function useTypePokemons(typeNames: string[]) {
   const typeKey = typeNames.slice().sort().join(",");
-  const [[storedKey, page], setPageState] = useState<[string, number]>([typeKey, 0]);
+  const [[storedKey, page], setPageState] = useState<[string, number]>([
+    typeKey,
+    0,
+  ]);
 
   const effectivePage = storedKey === typeKey ? page : 0;
   const goToPage = (p: number) => setPageState([typeKey, p]);
@@ -34,9 +37,9 @@ export function useTypePokemons(typeNames: string[]) {
   const allIds = Array.from(
     new Map(
       typeDetailQueries
-        .flatMap((q) => q.data?.pokemon ?? [])
-        .map(({ pokemon: p }) => {
-          const parts = p.url.split("/").filter(Boolean);
+        .flatMap((typeQuery) => typeQuery.data?.pokemon ?? [])
+        .map(({ pokemon: pokemonEntry }) => {
+          const parts = pokemonEntry.url.split("/").filter(Boolean);
           const id = Number(parts[parts.length - 1]);
           return [id, id] as [number, number];
         }),
@@ -44,7 +47,10 @@ export function useTypePokemons(typeNames: string[]) {
   );
 
   const totalPages = Math.max(1, Math.ceil(allIds.length / PER_PAGE));
-  const pageIds = allIds.slice(effectivePage * PER_PAGE, (effectivePage + 1) * PER_PAGE);
+  const pageIds = allIds.slice(
+    effectivePage * PER_PAGE,
+    (effectivePage + 1) * PER_PAGE,
+  );
 
   const detailQueries = useQueries({
     queries: pageIds.map((id) => ({
@@ -55,15 +61,15 @@ export function useTypePokemons(typeNames: string[]) {
   });
 
   const types = (typesData?.results ?? []).filter(
-    (t) => !EXCLUDED_TYPES.includes(t.name),
+    (type) => !EXCLUDED_TYPES.includes(type.name),
   );
   const pokemon = detailQueries
-    .map((q) => q.data)
-    .filter((d): d is PokemonDetail => !!d);
+    .map((detailQuery) => detailQuery.data)
+    .filter((data): data is PokemonDetail => !!data);
   const isLoading =
     typesLoading ||
-    typeDetailQueries.some((q) => q.isLoading) ||
-    detailQueries.some((q) => q.isLoading);
+    typeDetailQueries.some((query) => query.isLoading) ||
+    detailQueries.some((query) => query.isLoading);
 
   return {
     types,

@@ -2,8 +2,18 @@ import Image from "next/image";
 import { typeColors } from "@/lib/constants/typeColors";
 import type { PokemonDetail } from "@/types/pokemon";
 import { Badge } from "@/components/ui/badge";
+import { useFavorites } from "@/lib/context/FavoritesContext";
+import pokeBall from "@/public/poke-ball.png";
+import openedPokeBall from "@/public/opened-poke-ball.png";
 
-export function PokemonCard({ pokemon }: { pokemon: PokemonDetail }) {
+export function PokemonCard({
+  pokemon,
+  onClick,
+}: {
+  pokemon: PokemonDetail;
+  onClick?: () => void;
+}) {
+  const { isFavorite, toggle } = useFavorites();
   const artworkUrl = pokemon.sprites.other["official-artwork"].front_default;
   const color1 = typeColors[pokemon.types[0]?.type.name] ?? "#A8A77A";
   const color2 = typeColors[pokemon.types[1]?.type.name] ?? "#A8A77A";
@@ -14,10 +24,24 @@ export function PokemonCard({ pokemon }: { pokemon: PokemonDetail }) {
 
   return (
     <div
-      className="rounded-2xl p-4 flex flex-col items-center gap-2 shadow-md"
+      className="relative rounded-2xl p-4 flex flex-col items-center gap-2 shadow-md cursor-pointer hover:scale-105 transition-transform"
       style={{ background: bg }}
+      onClick={onClick}
     >
-      {/* <pre>{JSON.stringify(pokemon.types, null, 2)}</pre> */}
+      <button
+        className="absolute top-1 right-1 p-1 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          toggle(pokemon.id);
+        }}
+      >
+        <Image
+          src={isFavorite(pokemon.id) ? pokeBall : openedPokeBall}
+          alt="Add to favorite"
+          width={25}
+          height={25}
+        />
+      </button>
 
       {artworkUrl && (
         <Image

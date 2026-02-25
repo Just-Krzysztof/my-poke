@@ -35,15 +35,22 @@ export const PokemonList = ({
   page,
   totalPages,
   goToPage,
+  onSelect,
 }: PokemonListProps) => {
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {isLoading
           ? Array.from({ length: perPage }).map((_, i) => (
               <PokemonCardSkeleton key={i} />
             ))
-          : pokemon.map((p) => <PokemonCard key={p.id} pokemon={p} />)}
+          : pokemon.map((pokemonItem) => (
+              <PokemonCard
+                key={pokemonItem.id}
+                pokemon={pokemonItem}
+                onClick={() => onSelect?.(pokemonItem)}
+              />
+            ))}
       </div>
 
       <Pagination>

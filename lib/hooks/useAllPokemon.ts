@@ -25,8 +25,8 @@ export function useAllPokemon(enabled = true) {
       pageToEvict,
     ]);
 
-    oldList?.results.forEach((p) => {
-      const parts = p.url.split("/").filter(Boolean);
+    oldList?.results.forEach((listItem) => {
+      const parts = listItem.url.split("/").filter(Boolean);
       const id = Number(parts[parts.length - 1]);
       queryClient.removeQueries({ queryKey: ["pokemon-detail", id] });
     });
@@ -52,8 +52,8 @@ export function useAllPokemon(enabled = true) {
     enabled,
   });
 
-  const pokemonIds = (list?.results ?? []).map((p) => {
-    const parts = p.url.split("/").filter(Boolean);
+  const pokemonIds = (list?.results ?? []).map((listItem) => {
+    const parts = listItem.url.split("/").filter(Boolean);
     return Number(parts[parts.length - 1]);
   });
 
@@ -66,11 +66,11 @@ export function useAllPokemon(enabled = true) {
   });
 
   const isLoading =
-    listLoading || isPlaceholderData || detailQueries.some((q) => q.isLoading);
+    listLoading || isPlaceholderData || detailQueries.some((query) => query.isLoading);
   const totalPages = list ? Math.ceil(list.count / PER_PAGE) : 0;
   const pokemon = detailQueries
-    .map((q) => q.data)
-    .filter((d): d is PokemonDetail => !!d);
+    .map((detailQuery) => detailQuery.data)
+    .filter((data): data is PokemonDetail => !!data);
 
   return { pokemon, isLoading, totalPages, page, goToPage, perPage: PER_PAGE };
 }

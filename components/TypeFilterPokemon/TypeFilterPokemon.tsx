@@ -5,40 +5,66 @@ export const TypeFilterPokemon = ({
   types,
   selectedTypes,
   setSelectedTypes,
+  showFavorites,
+  setShowFavorites,
+  favoritesCount,
 }: TFilterPokemonProps) => {
-  const toggle = (name: string) => {
+  const toggleType = (name: string) => {
+    setShowFavorites(false);
     if (selectedTypes.includes(name)) {
-      setSelectedTypes(selectedTypes.filter((t) => t !== name));
+      setSelectedTypes(selectedTypes.filter((type) => type !== name));
     } else {
       setSelectedTypes([...selectedTypes, name]);
     }
   };
 
+  const handleAll = () => {
+    setShowFavorites(false);
+    setSelectedTypes([]);
+  };
+
+  const handleFavorites = () => {
+    setSelectedTypes([]);
+    setShowFavorites(true);
+  };
+
+  const noneActive = !showFavorites && selectedTypes.length === 0;
+
   return (
     <div className="flex flex-wrap gap-2 mb-6">
       <button
-        onClick={() => setSelectedTypes([])}
+        onClick={handleAll}
         className={`capitalize text-xs px-3 py-1 rounded-full border transition-colors cursor-pointer ${
-          selectedTypes.length === 0
-            ? "bg-foreground text-background"
-            : "hover:bg-muted"
+          noneActive ? "bg-foreground text-background" : "hover:bg-muted"
         }`}
       >
         Wszystkie
       </button>
-      {types.map((t) => {
-        const isActive = selectedTypes.includes(t.name);
+
+      <button
+        onClick={handleFavorites}
+        className={`text-xs px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+          showFavorites
+            ? "bg-foreground text-background"
+            : "hover:bg-muted"
+        }`}
+      >
+        ★ Ulubione {favoritesCount > 0 && `(${favoritesCount})`}
+      </button>
+
+      {types.map((type) => {
+        const isActive = selectedTypes.includes(type.name);
         return (
           <button
-            key={t.name}
-            onClick={() => toggle(t.name)}
+            key={type.name}
+            onClick={() => toggleType(type.name)}
             className="capitalize text-xs px-3 py-1 rounded-full border transition-colors text-white cursor-pointer"
             style={{
-              backgroundColor: typeColors[t.name],
-              borderColor: isActive ? "white" : typeColors[t.name],
+              backgroundColor: typeColors[type.name],
+              borderColor: isActive ? "white" : typeColors[type.name],
             }}
           >
-            {t.name}
+            {type.name}
           </button>
         );
       })}

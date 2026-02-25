@@ -7,4 +7,5 @@ export type PokemonListProps = {
   page: number;
   totalPages: number;
   goToPage: (page: number) => void;
+  onSelect?: (pokemon: PokemonDetail) => void;
 };
