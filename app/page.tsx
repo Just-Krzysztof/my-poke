@@ -6,6 +6,7 @@ import { PokemonCardSkeleton } from "@/components/PokemonCardSkeleton";
 import { PokemonDetailModal } from "@/components/PokemonDetailModal/PokemonDetailModal";
 import { Input } from "@/components/ui/input";
 import { useAllPokemon } from "@/lib/hooks/useAllPokemon";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 import { useSearchPokemon } from "@/lib/hooks/useSearchPokemon";
 import { useTypePokemons } from "@/lib/hooks/useTypePokemons";
 import { useFavoritePokemons } from "@/lib/hooks/useFavoritePokemons";
@@ -23,7 +24,8 @@ export default function Home() {
     null,
   );
 
-  const isSearching = search.trim().length >= 2;
+  const debouncedSearch = useDebounce(search);
+  const isSearching = debouncedSearch.trim().length >= 2;
   const isFilteringByType = selectedTypes.length > 0 && !isSearching && !showFavorites;
 
   const { pokemon, isLoading, totalPages, page, goToPage, perPage } =
@@ -32,7 +34,7 @@ export default function Home() {
     result: searchResult,
     isLoading: searchLoading,
     isError: searchError,
-  } = useSearchPokemon(search);
+  } = useSearchPokemon(debouncedSearch);
   const {
     types,
     pokemon: typePokemon,
