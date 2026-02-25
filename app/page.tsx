@@ -26,7 +26,8 @@ export default function Home() {
 
   const debouncedSearch = useDebounce(search);
   const isSearching = debouncedSearch.trim().length >= 2;
-  const isFilteringByType = selectedTypes.length > 0 && !isSearching && !showFavorites;
+  const isFilteringByType =
+    selectedTypes.length > 0 && !isSearching && !showFavorites;
 
   const { pokemon, isLoading, totalPages, page, goToPage, perPage } =
     useAllPokemon(!isSearching && !isFilteringByType && !showFavorites);
@@ -56,26 +57,28 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-8 max-w-350 mx-auto">
-      <h1 className="text-3xl font-bold mb-4 bg-linear-to-r from-[#FF6D01] to-[#FF9700] bg-clip-text text-transparent">
-        <Image
-          src={pokeBall}
-          alt="Poke ball"
-          width={32}
-          height={32}
-          className="inline mr-2"
-        />
-        Pokemon Explorer
-      </h1>
+      <div className="flex flex-col items-center">
+        <h1 className="text-3xl font-bold mb-4 bg-linear-to-r from-[#FF6D01] to-[#FF9700] bg-clip-text text-transparent ">
+          <Image
+            src={pokeBall}
+            alt="Poke ball"
+            width={32}
+            height={32}
+            className="inline mr-2"
+          />
+          Pokemon Explorer
+        </h1>
 
-      <Input
-        placeholder="Szukaj pokemona po nazwie..."
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setSelectedTypes([]);
-        }}
-        className="mb-4 max-w-sm"
-      />
+        <Input
+          placeholder="Szukaj pokemona po nazwie..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setSelectedTypes([]);
+          }}
+          className="mb-4 max-w-sm"
+        />
+      </div>
 
       {!isSearching && (
         <TypeFilterPokemon
